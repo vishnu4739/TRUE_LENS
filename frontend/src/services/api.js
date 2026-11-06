@@ -23,11 +23,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message =
+    let message =
       error.response?.data?.message ||
-      error.response?.data?.detail ||
-      error.message ||
-      'An unexpected error occurred';
+      error.response?.data?.detail;
+
+    if (!message) {
+      if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
+        message = 'Cannot reach backend server. Please make sure the TrueLens backend is started on port 5000, or open http://localhost:5173.';
+      } else {
+        message = error.message || 'An unexpected error occurred';
+      }
+    }
     return Promise.reject(new Error(message));
   }
 );
