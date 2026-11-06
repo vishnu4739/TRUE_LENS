@@ -20,6 +20,8 @@ export default function Home() {
 
     try {
       const result = await analyzeImage(selectedFile);
+      const previewUrl = URL.createObjectURL(selectedFile);
+      result.previewUrl = previewUrl;
       // Navigate to results page with prediction id
       const predId = result._id || result.id || result.prediction_id;
       navigate(`/results/${predId}`, { state: { prediction: result } });

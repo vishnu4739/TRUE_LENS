@@ -22,6 +22,8 @@ export default function Analyze() {
 
     try {
       const result = await analyzeImage(selectedFile);
+      const previewUrl = URL.createObjectURL(selectedFile);
+      result.previewUrl = previewUrl;
       setPrediction(result);
     } catch (err) {
       setError(err.message || 'Image analysis failed. Please verify that the backend and ML service are active.');
