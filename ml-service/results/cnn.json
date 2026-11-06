@@ -1,0 +1,13 @@
+{
+  "model": "Convolutional Neural Network",
+  "model_key": "cnn",
+  "model_type": "deep",
+  "status": "not_trained",
+  "accuracy": null,
+  "precision": null,
+  "recall": null,
+  "f1_score": null,
+  "roc_auc": null,
+  "confusion_matrix": null,
+  "dataset_version": "TrueLens Synthetic Benchmark v1"
+}

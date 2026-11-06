@@ -1,0 +1,25 @@
+{
+  "dataset_name": "TrueLens Synthetic Benchmark v1",
+  "dataset_source": "Procedural natural camera noise & latent diffusion artifact simulation",
+  "license": "Creative Commons CC0 Public Domain (Academic & Educational Use)",
+  "number_of_images": 110,
+  "class_distribution": {
+    "real_photographs": 55,
+    "ai_generated_images": 55
+  },
+  "train_val_test_split": {
+    "train": 60,
+    "validation": 20,
+    "test": 30
+  },
+  "image_resolution": [
+    224,
+    224
+  ],
+  "preprocessing": "RGB conversion, resize to 224x224, min-max normalization, HOG, LBP texture, DCT frequency, color statistics",
+  "known_limitations": [
+    "Synthetic simulation dataset designed for reproducible algorithmic verification and testing.",
+    "Real-world generalization requires training on massive multi-generator corpuses (e.g., CIFAKE, GenImage, Midjourney, SDXL, DALL-E 3).",
+    "Predictions are probability estimates and should not be treated as proof of origin."
+  ]
+}

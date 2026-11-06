@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+env/
+venv/
+.venv/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Build output
+frontend/dist/
+frontend/build/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# ML artifacts
+ml-service/models/saved/*.pkl
+ml-service/models/saved/*.joblib
+ml-service/models/saved/*.pt
+ml-service/models/saved/*.pth
+ml-service/data/train/
+ml-service/data/test/
+ml-service/data/val/
+!ml-service/data/train/.gitkeep
+!ml-service/data/test/.gitkeep
+!ml-service/data/val/.gitkeep
+
+# Uploaded files
+backend/uploads/
+
+# Coverage
+coverage/
+.nyc_output/
+htmlcov/
+
