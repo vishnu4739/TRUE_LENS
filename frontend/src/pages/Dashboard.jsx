@@ -160,8 +160,8 @@ export default function Dashboard() {
                       const id = item._id || item.id || item.prediction_id || idx;
                       const pClass = item.predictionClass || item.predicted_class || 'original';
                       const isAi = pClass === 'ai_generated' || pClass === 'ai';
-                      const pOrig = item.originalProbability ?? item.original_probability ?? 0;
-                      const pAi = item.aiGeneratedProbability ?? item.ai_generated_probability ?? 0;
+                      const uStatus = item.uncertaintyStatus || item.uncertainty_status;
+                      const isUncertain = uStatus === 'uncertain' || uStatus === 'inconclusive' || uStatus === 'highly_uncertain';
                       const time = item.analysisTimestamp || item.analyzed_at;
 
                       return (
@@ -175,11 +175,8 @@ export default function Dashboard() {
                             </span>
                           </div>
                           <div className="item-meta">
-                            <span className={`badge ${isAi ? 'badge-error' : 'badge-success'}`}>
-                              {isAi ? 'AI-Generated' : 'Original'}
-                            </span>
-                            <span className="item-prob">
-                              {((isAi ? pAi : pOrig) * 100).toFixed(0)}% conf
+                            <span className={`badge ${isUncertain ? 'badge-warning' : isAi ? 'badge-error' : 'badge-success'}`}>
+                              {isUncertain ? 'Inconclusive' : isAi ? 'Not Original' : 'Original'}
                             </span>
                             <Link to={`/results/${id}`} state={{ prediction: item }} className="btn btn-ghost btn-sm">
                               Inspect

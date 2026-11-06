@@ -1,7 +1,9 @@
-import React from 'react';
-import { AlertTriangle, CheckCircle, HelpCircle, Layers } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertTriangle, CheckCircle, HelpCircle, Layers, ChevronDown, ChevronUp, ShieldCheck, ShieldAlert } from 'lucide-react';
 
 export default function PredictionCard({ prediction }) {
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
+
   if (!prediction) return null;
 
   const {
@@ -33,95 +35,106 @@ export default function PredictionCard({ prediction }) {
   const isAi = pClass === 'ai_generated' || pClass === 'ai';
   const isUncertain = uStatus === 'uncertain' || uStatus === 'inconclusive' || uStatus === 'highly_uncertain';
 
-  const formatPct = (val) => `${(val * 100).toFixed(1)}%`;
+  // Determine qualitative confidence level
+  const maxScore = Math.max(pOrig, pAi);
+  let confidenceLabel = 'High Confidence';
+  if (isUncertain) {
+    confidenceLabel = 'Inconclusive / Low Confidence';
+  } else if (maxScore < 0.75) {
+    confidenceLabel = 'Moderate Confidence';
+  }
+
+  // Count how many individual models vote Original vs Not Original
+  const originalVotes = mPredictions.filter(
+    (m) => (m.prediction || m.predicted_class) === 'original' || (m.prediction || m.predicted_class) === 'real'
+  ).length;
+  const aiVotes = mPredictions.filter(
+    (m) => (m.prediction || m.predicted_class) === 'ai_generated' || (m.prediction || m.predicted_class) === 'ai'
+  ).length;
+  const totalVotes = mPredictions.length;
 
   return (
     <div className="prediction-card card">
-      {/* Primary Result Banner */}
-      <div className={`result-banner ${isUncertain ? 'banner-uncertain' : isAi ? 'banner-ai' : 'banner-real'}`}>
-        <div className="banner-icon">
+      {/* Primary Verdict Banner */}
+      <div className={`verdict-banner ${isUncertain ? 'verdict-uncertain' : isAi ? 'verdict-ai' : 'verdict-real'}`}>
+        <div className="verdict-icon-wrap">
           {isUncertain ? (
-            <HelpCircle size={28} />
+            <HelpCircle size={40} />
           ) : isAi ? (
-            <AlertTriangle size={28} />
+            <ShieldAlert size={40} />
           ) : (
-            <CheckCircle size={28} />
+            <ShieldCheck size={40} />
           )}
         </div>
-        <div className="banner-text">
-          <span className="banner-label">Authenticity Assessment</span>
-          <h2 className="banner-title">
+
+        <div className="verdict-text-block">
+          <span className="verdict-category">Authenticity Decision</span>
+          <h2 className="verdict-status-title">
             {isUncertain
-              ? 'Inconclusive / Uncertain Result'
+              ? 'INCONCLUSIVE'
               : isAi
-              ? 'Likely AI-Generated Image'
-              : 'Likely Original Photograph'}
+              ? 'NOT ORIGINAL (AI-GENERATED)'
+              : 'ORIGINAL'}
           </h2>
-          <p className="banner-note">
+          <p className="verdict-status-desc">
             {isUncertain
-              ? 'The models produced close or conflicting probabilities. No conclusive classification can be made.'
+              ? 'The system cannot reliably confirm whether this image is authentic or AI-generated. The models returned conflicting indicators.'
               : isAi
-              ? 'Statistical frequency and texture patterns exhibit characteristics commonly found in synthetic generation.'
-              : 'Color distribution, sensor grain, and frequency response align with camera-captured photography.'}
+              ? 'This image is NOT an original photograph. Algorithmic patterns match synthetic / AI-generated characteristics.'
+              : 'This image is an ORIGINAL photograph. Sensor grain, edge gradient structure, and color moments match camera captures.'}
           </p>
         </div>
       </div>
 
-      {/* Probability Bars */}
-      <div className="probability-section">
-        <h3 className="section-title">Aggregate Probability Estimates</h3>
-        <div className="prob-grid">
-          <div className="prob-item">
-            <div className="prob-header">
-              <span className="prob-label">Original Photograph</span>
-              <span className="prob-value">{formatPct(pOrig)}</span>
-            </div>
-            <div className="progress-track">
-              <div
-                className="progress-fill progress-real"
-                style={{ width: `${Math.min(100, Math.max(0, pOrig * 100))}%` }}
-              />
-            </div>
+      {/* Primary Key Decision Summary Box */}
+      <div className="decision-summary-section">
+        <div className="decision-metrics-grid">
+          <div className="decision-metric-box">
+            <span className="dm-label">Final Classification</span>
+            <span className={`dm-verdict-badge ${isUncertain ? 'badge-warning' : isAi ? 'badge-error' : 'badge-success'}`}>
+              {isUncertain ? 'Inconclusive' : isAi ? 'Not Original' : 'Original'}
+            </span>
           </div>
 
-          <div className="prob-item">
-            <div className="prob-header">
-              <span className="prob-label">AI-Generated Image</span>
-              <span className="prob-value">{formatPct(pAi)}</span>
-            </div>
-            <div className="progress-track">
-              <div
-                className="progress-fill progress-ai"
-                style={{ width: `${Math.min(100, Math.max(0, pAi * 100))}%` }}
-              />
-            </div>
+          <div className="decision-metric-box">
+            <span className="dm-label">Confidence Assessment</span>
+            <span className="dm-value-text">{confidenceLabel}</span>
+          </div>
+
+          <div className="decision-metric-box">
+            <span className="dm-label">Model Consensus</span>
+            <span className="dm-value-text">
+              {totalVotes > 0
+                ? isAi
+                  ? `${aiVotes} of ${totalVotes} algorithms detect AI`
+                  : `${originalVotes} of ${totalVotes} algorithms verify Original`
+                : 'Consensus verified'}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Uncertainty Advisory Notice */}
+      {/* Advisory Notice */}
       <div className="advisory-box">
-        <strong>Notice:</strong> Machine learning predictions represent statistical likelihood estimates 
-        derived from algorithmic feature extraction. They do not constitute forensic or legal proof of image provenance.
+        <strong>Important Note:</strong> This assessment is an automated machine learning determination. 
+        It distinguishes between natural camera photographs and AI-generated media based on statistical feature patterns.
       </div>
 
-      {/* Per-Model Breakdown */}
+      {/* Model-Wise Classification Table */}
       {mPredictions && mPredictions.length > 0 && (
         <div className="models-breakdown-section">
           <div className="breakdown-header">
             <Layers size={18} />
-            <h3 className="section-title">Model-Wise Predictions ({mPredictions.length} Algorithms)</h3>
+            <h3 className="section-title">Individual Algorithm Decisions ({mPredictions.length} Models)</h3>
           </div>
           <div className="table-responsive">
             <table className="breakdown-table">
               <thead>
                 <tr>
                   <th>Algorithm</th>
-                  <th>Predicted Class</th>
-                  <th>Confidence</th>
-                  <th>Real Probability</th>
-                  <th>AI Probability</th>
-                  <th>Status</th>
+                  <th>Verdict</th>
+                  <th>Confidence Level</th>
+                  <th>Consensus</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,29 +142,35 @@ export default function PredictionCard({ prediction }) {
                   const mName = mp.modelName || mp.model_name || `Model ${index + 1}`;
                   const mClass = mp.prediction || mp.predicted_class || 'original';
                   const mConf = mp.confidence ?? 0;
-                  const mOrigP = mp.originalProbability ?? mp.original_probability ?? (1 - mConf);
-                  const mAiP = mp.aiGeneratedProbability ?? mp.ai_generated_probability ?? mConf;
-                  const mUnc = mp.is_uncertain ?? (Math.abs(mAiP - mOrigP) < 0.15);
+                  const mUnc = mp.is_uncertain ?? false;
 
                   const mIsAi = mClass === 'ai_generated' || mClass === 'ai';
+                  const agreesWithOverall = isAi === mIsAi;
+
+                  let mConfLabel = 'High Confidence';
+                  if (mUnc) {
+                    mConfLabel = 'Uncertain';
+                  } else if (mConf < 0.75) {
+                    mConfLabel = 'Moderate';
+                  }
 
                   return (
                     <tr key={mName + index}>
                       <td className="model-name-cell">{mName}</td>
                       <td>
-                        <span className={`badge ${mIsAi ? 'badge-error' : 'badge-success'}`}>
-                          {mIsAi ? 'AI-Generated' : 'Original'}
+                        <span className={`badge ${mIsAi ? 'badge-error' : 'badge-success'} verdict-badge-lg`}>
+                          {mIsAi ? 'Not Original (AI)' : 'Original'}
                         </span>
                       </td>
-                      <td className="mono-cell">{formatPct(mConf)}</td>
-                      <td className="mono-cell">{formatPct(mOrigP)}</td>
-                      <td className="mono-cell">{formatPct(mAiP)}</td>
                       <td>
-                        {mUnc ? (
-                          <span className="badge badge-warning">Uncertain</span>
-                        ) : (
-                          <span className="badge badge-info">Consistent</span>
-                        )}
+                        <span className={`badge ${mUnc ? 'badge-warning' : 'badge-info'}`}>
+                          {mConfLabel}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={agreesWithOverall ? 'consensus-yes' : 'consensus-no'}>
+                          {agreesWithOverall ? 'Agrees' : 'Disagrees'}
+                        </span>
                       </td>
                     </tr>
                   );
@@ -162,9 +181,37 @@ export default function PredictionCard({ prediction }) {
         </div>
       )}
 
+      {/* Technical Data Drawer (Optional / Collapsible) */}
+      <div className="technical-drawer-section">
+        <button
+          onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
+          className="btn btn-ghost btn-sm tech-toggle-btn"
+        >
+          <span>{showTechnicalDetails ? 'Hide Statistical Probabilities' : 'Show Statistical Probabilities'}</span>
+          {showTechnicalDetails ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+        </button>
+
+        {showTechnicalDetails && (
+          <div className="technical-details-box">
+            <div className="tech-stat-row">
+              <span>Original Probability Score:</span>
+              <code>{(pOrig * 100).toFixed(2)}%</code>
+            </div>
+            <div className="tech-stat-row">
+              <span>AI-Generated Probability Score:</span>
+              <code>{(pAi * 100).toFixed(2)}%</code>
+            </div>
+            <div className="tech-stat-row">
+              <span>Uncertainty Margin Status:</span>
+              <code>{uStatus}</code>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Meta Footer */}
       <div className="card-meta-footer">
-        {imageFilename && <span>File: <strong>{imageFilename}</strong></span>}
+        {imageFilename && <span>Image: <strong>{imageFilename}</strong></span>}
         <span>Model Version: <strong>{mVersion}</strong></span>
         {timestamp && <span>Analyzed: <strong>{new Date(timestamp).toLocaleString()}</strong></span>}
       </div>
@@ -174,101 +221,91 @@ export default function PredictionCard({ prediction }) {
           padding: 0;
           overflow: hidden;
         }
-        .result-banner {
+        .verdict-banner {
           display: flex;
           align-items: flex-start;
-          gap: 16px;
-          padding: 24px;
+          gap: 20px;
+          padding: 32px 28px;
           border-bottom: 1px solid var(--color-border);
         }
-        .banner-real {
-          background: var(--color-success-bg);
-          border-left: 4px solid var(--color-success);
+        .verdict-real {
+          background: #F0FDF4;
+          border-left: 6px solid var(--color-success);
           color: var(--color-success);
         }
-        .banner-ai {
-          background: var(--color-error-bg);
-          border-left: 4px solid var(--color-error);
+        .verdict-ai {
+          background: #FEF2F2;
+          border-left: 6px solid var(--color-error);
           color: var(--color-error);
         }
-        .banner-uncertain {
-          background: var(--color-warning-bg);
-          border-left: 4px solid var(--color-warning);
+        .verdict-uncertain {
+          background: #FFFBEB;
+          border-left: 6px solid var(--color-warning);
           color: var(--color-warning);
         }
-        .banner-icon {
+        .verdict-icon-wrap {
           flex-shrink: 0;
           padding-top: 2px;
         }
-        .banner-label {
+        .verdict-category {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          font-weight: 700;
+          display: block;
+          margin-bottom: 6px;
+        }
+        .verdict-status-title {
+          font-size: 1.85rem;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: var(--color-text-primary);
+          margin-bottom: 8px;
+          line-height: 1.15;
+        }
+        .verdict-status-desc {
+          font-size: 1rem;
+          color: var(--color-text-secondary);
+          line-height: 1.5;
+          max-width: 680px;
+        }
+        .decision-summary-section {
+          padding: 24px 28px;
+          border-bottom: 1px solid var(--color-border);
+          background: var(--color-surface);
+        }
+        .decision-metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+        .decision-metric-box {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .dm-label {
           font-size: 0.8rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          color: var(--color-text-muted);
           font-weight: 600;
-          display: block;
-          margin-bottom: 4px;
         }
-        .banner-title {
-          font-size: 1.375rem;
+        .dm-verdict-badge {
+          display: inline-block;
+          font-size: 1rem;
           font-weight: 700;
-          color: var(--color-text-primary);
-          margin-bottom: 6px;
+          padding: 4px 12px;
+          border-radius: var(--radius-sm);
+          width: fit-content;
         }
-        .banner-note {
-          font-size: 0.925rem;
-          color: var(--color-text-secondary);
-          line-height: 1.45;
-        }
-        .probability-section {
-          padding: 24px;
-          border-bottom: 1px solid var(--color-border);
-        }
-        .section-title {
+        .dm-value-text {
           font-size: 1.05rem;
           font-weight: 600;
           color: var(--color-text-primary);
-          margin-bottom: 16px;
-        }
-        .prob-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-        .prob-header {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 8px;
-          font-size: 0.875rem;
-        }
-        .prob-label {
-          font-weight: 500;
-          color: var(--color-text-primary);
-        }
-        .prob-value {
-          font-weight: 600;
-          font-family: var(--font-mono);
-          color: var(--color-text-primary);
-        }
-        .progress-track {
-          height: 10px;
-          background: var(--color-background);
-          border-radius: 9999px;
-          overflow: hidden;
-          border: 1px solid var(--color-border);
-        }
-        .progress-fill {
-          height: 100%;
-          border-radius: 9999px;
-          transition: width 0.4s ease;
-        }
-        .progress-real {
-          background: var(--color-success);
-        }
-        .progress-ai {
-          background: var(--color-error);
         }
         .advisory-box {
-          margin: 20px 24px;
+          margin: 20px 28px;
           padding: 12px 16px;
           background: var(--color-background);
           border: 1px solid var(--color-border);
@@ -281,7 +318,7 @@ export default function PredictionCard({ prediction }) {
           color: var(--color-text-primary);
         }
         .models-breakdown-section {
-          padding: 0 24px 24px;
+          padding: 0 28px 24px;
         }
         .breakdown-header {
           display: flex;
@@ -292,6 +329,7 @@ export default function PredictionCard({ prediction }) {
         }
         .breakdown-header .section-title {
           margin-bottom: 0;
+          font-size: 1.05rem;
         }
         .table-responsive {
           overflow-x: auto;
@@ -303,31 +341,70 @@ export default function PredictionCard({ prediction }) {
         }
         .breakdown-table th {
           text-align: left;
-          padding: 10px 12px;
+          padding: 12px 14px;
           background: var(--color-background);
           color: var(--color-text-secondary);
           font-weight: 600;
-          font-size: 0.8rem;
+          font-size: 0.775rem;
           text-transform: uppercase;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.05em;
           border-bottom: 1px solid var(--color-border);
         }
         .breakdown-table td {
-          padding: 12px;
+          padding: 12px 14px;
           border-bottom: 1px solid var(--color-border);
           color: var(--color-text-primary);
         }
         .model-name-cell {
-          font-weight: 500;
+          font-weight: 600;
         }
-        .mono-cell {
-          font-family: var(--font-mono);
+        .verdict-badge-lg {
+          padding: 4px 10px;
           font-size: 0.85rem;
+        }
+        .consensus-yes {
+          color: var(--color-success);
+          font-weight: 600;
+          font-size: 0.85rem;
+        }
+        .consensus-no {
+          color: var(--color-error);
+          font-weight: 600;
+          font-size: 0.85rem;
+        }
+        .technical-drawer-section {
+          padding: 0 28px 20px;
+        }
+        .tech-toggle-btn {
+          font-size: 0.85rem;
+          color: var(--color-text-secondary);
+        }
+        .technical-details-box {
+          margin-top: 10px;
+          padding: 14px 18px;
+          background: var(--color-background);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 0.85rem;
+        }
+        .tech-stat-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: var(--color-text-secondary);
+        }
+        .tech-stat-row code {
+          font-family: var(--font-mono);
+          font-weight: 600;
+          color: var(--color-text-primary);
         }
         .card-meta-footer {
           display: flex;
           justify-content: space-between;
-          padding: 14px 24px;
+          padding: 14px 28px;
           background: var(--color-background);
           border-top: 1px solid var(--color-border);
           font-size: 0.8rem;
@@ -339,12 +416,25 @@ export default function PredictionCard({ prediction }) {
           color: var(--color-text-secondary);
         }
         @media (max-width: 640px) {
-          .prob-grid {
-            grid-template-columns: 1fr;
-          }
-          .card-meta-footer {
+          .verdict-banner {
             flex-direction: column;
-            gap: 6px;
+            gap: 12px;
+            padding: 20px;
+          }
+          .verdict-status-title {
+            font-size: 1.4rem;
+          }
+          .decision-metrics-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .decision-summary-section,
+          .advisory-box,
+          .models-breakdown-section,
+          .technical-drawer-section,
+          .card-meta-footer {
+            padding-left: 16px;
+            padding-right: 16px;
           }
         }
       `}</style>
