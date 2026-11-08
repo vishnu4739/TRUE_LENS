@@ -54,7 +54,7 @@ export default function History() {
 
     try {
       await deleteAnalysisById(id);
-      setAnalyses((prev) => prev.filter((item) => (item._id || item.id) !== id));
+      setAnalyses((prev) => prev.filter((item) => (item._id || item.id || item.prediction_id) !== id));
     } catch (err) {
       alert(`Could not delete record: ${err.message}`);
     }
