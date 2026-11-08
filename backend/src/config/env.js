@@ -8,6 +8,6 @@ module.exports = {
   PORT: process.env.PORT || 5000,
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/truelens',
   JWT_SECRET: process.env.JWT_SECRET || 'default_dev_secret_change_me',
-  ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
+  ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8001',
   NODE_ENV: process.env.NODE_ENV || 'development',
 };
