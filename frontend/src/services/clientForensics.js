@@ -250,3 +250,4 @@ export async function runClientForensicAnalysis(file) {
     reader.readAsDataURL(file);
   });
 }
+
