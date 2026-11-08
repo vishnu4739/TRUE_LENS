@@ -89,9 +89,9 @@ export default function Dashboard() {
     <div className="page dashboard-page">
       <div className="container">
         <div className="page-header">
-          <h1>System Overview & Metrics</h1>
+          <h1>System Dashboard</h1>
           <p>
-            Summary of executed authenticity analyses and machine learning algorithm performance.
+            Real-time verification history and forensic model performance.
           </p>
         </div>
 

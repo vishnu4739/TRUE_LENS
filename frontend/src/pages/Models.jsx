@@ -63,10 +63,9 @@ export default function Models() {
     <div className="page models-page">
       <div className="container">
         <div className="page-header">
-          <h1>Algorithm Benchmark & Comparison</h1>
+          <h1>Model Benchmarks</h1>
           <p>
-            Comparative empirical evaluation of 7 supervised classification models trained 
-            on photographic and synthetic image distributions.
+            Empirical accuracy and performance metrics across 7 forensic detection algorithms.
           </p>
         </div>
 

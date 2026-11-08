@@ -88,9 +88,11 @@ app.use(errorHandler);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 
-app.listen(PORT, () => {
-  console.log(`[TrueLens] Backend running on port ${PORT} [${NODE_ENV}]`);
-  console.log(`[TrueLens] Health: http://localhost:${PORT}/api/health`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`[TrueLens] Backend running on port ${PORT} [${NODE_ENV}]`);
+    console.log(`[TrueLens] Health: http://localhost:${PORT}/api/health`);
+  });
+}
 
 module.exports = app;

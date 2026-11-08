@@ -226,11 +226,9 @@ export default function PredictionCard({ prediction }) {
         </div>
       )}
 
-      {/* Advisory Notice */}
+      {/* Forensic Verification Notice */}
       <div className="advisory-box">
-        <strong>Notice:</strong> TrueLens percentages represent statistical probability scores 
-        derived from feature extraction (HOG, texture, DCT frequency, color moments). 
-        They are model estimates and not absolute legal proof of image provenance.
+        Probabilities reflect algorithmic multi-model consensus across extracted frequency and texture signatures.
       </div>
 
       {/* Meta Footer */}

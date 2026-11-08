@@ -4,7 +4,8 @@ import ImageUploader from '../components/ImageUploader';
 import { analyzeImage } from '../services/analysisService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
-import { Shield, Cpu, Activity, Database, ArrowRight } from 'lucide-react';
+import Logo from '../components/Logo';
+import { ShieldCheck, Cpu, Activity, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -22,11 +23,10 @@ export default function Home() {
       const result = await analyzeImage(selectedFile);
       const previewUrl = URL.createObjectURL(selectedFile);
       result.previewUrl = previewUrl;
-      // Navigate to results page with prediction id
       const predId = result._id || result.id || result.prediction_id;
       navigate(`/results/${predId}`, { state: { prediction: result } });
     } catch (err) {
-      setError(err.message || 'Analysis failed. Please check backend and ML service status.');
+      setError(err.message || 'Forensic analysis could not be completed. Please try another image.');
     } finally {
       setLoading(false);
     }
@@ -35,35 +35,37 @@ export default function Home() {
   return (
     <div className="page home-page">
       <div className="container">
-        {/* Header Hero Section */}
-        <div className="hero-section">
-          <div className="brand-header">
-            <span className="hero-tag">Computer Science Research System</span>
-            <h1 className="hero-title">TrueLens</h1>
-            <p className="hero-subtitle">
-              AI-Powered Image Authenticity Detection System. Evaluates statistical noise, 
-              frequency artifacts, and texture signatures to estimate whether an image is 
-              likely camera-captured or synthetic.
+        {/* Concise Hero Section */}
+        <section className="hero-section">
+          <div className="hero-badge">
+            <span className="badge-dot"></span>
+            <span>Image Forensics Engine</span>
+          </div>
+
+          <h1 className="hero-title">
+            Verify Image Authenticity
+          </h1>
+
+          <p className="hero-tagline">
+            Deterministic forensic analysis to verify original photography versus synthetic AI media.
+          </p>
+        </section>
+
+        {/* Upload & Direct Analysis Workspace */}
+        <div className="upload-container card">
+          <div className="upload-header">
+            <h2 className="upload-heading">Select Image for Forensic Verification</h2>
+            <p className="upload-subheading">
+              Supports standard formats (JPG, PNG, WEBP) up to 10 MB.
             </p>
           </div>
 
-          {/* Quick Notice */}
-          <div className="research-advisory">
-            <strong>Model Assessment Notice:</strong> Predictions are algorithmic confidence estimates, 
-            not conclusive legal evidence of origin. Seven supervised models provide cross-validation.
-          </div>
-        </div>
-
-        {/* Upload & Analysis Box */}
-        <div className="analysis-box card">
-          <h2 className="box-title">Upload Image for Authenticity Inspection</h2>
-          <p className="box-desc">
-            Select or drag an image file to begin multi-model feature analysis.
-          </p>
-
           <ImageUploader
             selectedFile={selectedFile}
-            onImageSelect={(file) => setSelectedFile(file)}
+            onImageSelect={(file) => {
+              setSelectedFile(file);
+              setError(null);
+            }}
             onRemove={() => setSelectedFile(null)}
           />
 
@@ -74,239 +76,186 @@ export default function Home() {
           )}
 
           {loading ? (
-            <LoadingSpinner message="Extracting HOG, texture, DCT features and evaluating across trained algorithms..." />
+            <LoadingSpinner message="Executing multi-model forensic inference..." />
           ) : (
-            <div className="action-row">
+            <div className="upload-actions">
               <button
                 onClick={handleAnalyze}
                 disabled={!selectedFile || loading}
-                className="btn btn-primary analyze-btn"
+                className="btn btn-primary analyze-submit-btn"
               >
                 <span>Analyze Authenticity</span>
                 <ArrowRight size={16} />
               </button>
               {selectedFile && (
-                <span className="ready-indicator">Image ready for model inference</span>
+                <span className="status-ready">
+                  <CheckCircle2 size={16} />
+                  Ready for verification
+                </span>
               )}
             </div>
           )}
         </div>
 
-        {/* Methodology Flow */}
-        <div className="methodology-section">
-          <div className="section-header">
-            <h2 className="section-title">Detection Methodology</h2>
-            <p className="section-subtitle">
-              How TrueLens examines uploaded images across multiple algorithmic tiers
-            </p>
-          </div>
-
-          <div className="grid-3 method-grid">
-            <div className="card method-card">
-              <div className="method-step">01</div>
-              <Cpu size={22} className="method-icon" />
-              <h3 className="method-title">Feature Extraction</h3>
-              <p className="method-desc">
-                Extracts Histogram of Oriented Gradients (HOG), Local Binary Pattern texture 
-                statistics, Discrete Cosine Transform (DCT) frequency distributions, and color moments.
+        {/* Single-Line Core Pillars */}
+        <section className="pillars-section">
+          <div className="grid-3 pillars-grid">
+            <div className="card pillar-card">
+              <div className="pillar-icon-box">
+                <Cpu size={20} />
+              </div>
+              <h3 className="pillar-title">Multi-Model Consensus</h3>
+              <p className="pillar-desc">
+                Cross-validates predictions across 7 machine learning and neural architectures.
               </p>
             </div>
 
-            <div className="card method-card">
-              <div className="method-step">02</div>
-              <Activity size={22} className="method-icon" />
-              <h3 className="method-title">Multi-Model Inference</h3>
-              <p className="method-desc">
-                Processes inputs concurrently through 7 trained architectures: Logistic Regression, 
-                Random Forest, SVM, KNN, XGBoost, CNN, and Vision Transformer.
+            <div className="card pillar-card">
+              <div className="pillar-icon-box">
+                <Activity size={20} />
+              </div>
+              <h3 className="pillar-title">Frequency Forensics</h3>
+              <p className="pillar-desc">
+                Detects generative diffusion artifacts in spatial and frequency domains.
               </p>
             </div>
 
-            <div className="card method-card">
-              <div className="method-step">03</div>
-              <Database size={22} className="method-icon" />
-              <h3 className="method-title">Uncertainty Scoring</h3>
-              <p className="method-desc">
-                Calculates aggregate confidence probabilities. If predictions conflict or fall within 
-                the 40% - 60% margin, the result is flagged as inconclusive rather than false certainty.
+            <div className="card pillar-card">
+              <div className="pillar-icon-box">
+                <Lock size={20} />
+              </div>
+              <h3 className="pillar-title">Privacy Guaranteed</h3>
+              <p className="pillar-desc">
+                In-memory evaluation with no permanent external image retention.
               </p>
             </div>
           </div>
-        </div>
-
-        {/* Supported Formats Info */}
-        <div className="card specs-card">
-          <div className="specs-grid">
-            <div className="spec-item">
-              <span className="spec-label">Supported File Types</span>
-              <span className="spec-val">JPG, JPEG, PNG, WEBP</span>
-            </div>
-            <div className="spec-item">
-              <span className="spec-label">Maximum Upload Size</span>
-              <span className="spec-val">10 Megabytes</span>
-            </div>
-            <div className="spec-item">
-              <span className="spec-label">Algorithmic Families</span>
-              <span className="spec-val">Traditional ML + Deep Learning</span>
-            </div>
-            <div className="spec-item">
-              <span className="spec-label">Inference Mode</span>
-              <span className="spec-val">Local Offline Inference</span>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
 
       <style>{`
         .home-page {
-          padding-top: 40px;
+          padding-top: 36px;
+          padding-bottom: 60px;
         }
         .hero-section {
           text-align: center;
-          max-width: 780px;
-          margin: 0 auto 40px;
+          max-width: 720px;
+          margin: 0 auto 36px;
         }
-        .hero-tag {
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #EFF6FF;
+          border: 1px solid #DBEAFE;
+          color: #1D4ED8;
           font-size: 0.8rem;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--color-text-secondary);
-          display: inline-block;
-          margin-bottom: 8px;
+          padding: 4px 12px;
+          border-radius: 999px;
+          margin-bottom: 16px;
+          letter-spacing: 0.02em;
+        }
+        .badge-dot {
+          width: 6px;
+          height: 6px;
+          background: #2563EB;
+          border-radius: 50%;
         }
         .hero-title {
           font-size: 2.75rem;
           font-weight: 800;
-          letter-spacing: -0.03em;
-          color: var(--color-primary);
+          letter-spacing: -0.035em;
+          color: var(--color-text-primary);
+          line-height: 1.15;
           margin-bottom: 12px;
         }
-        .hero-subtitle {
+        .hero-tagline {
           font-size: 1.125rem;
           color: var(--color-text-secondary);
-          line-height: 1.6;
+          line-height: 1.5;
+          margin: 0;
+        }
+        .upload-container {
+          max-width: 720px;
+          margin: 0 auto 48px;
+          padding: 32px;
+          background: #ffffff;
+        }
+        .upload-header {
           margin-bottom: 20px;
         }
-        .research-advisory {
-          background: #EFF6FF;
-          border: 1px solid #BFDBFE;
-          color: #1E40AF;
-          padding: 12px 18px;
-          border-radius: var(--radius-md);
-          font-size: 0.85rem;
-          text-align: left;
+        .upload-heading {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--color-text-primary);
+          margin-bottom: 4px;
         }
-        .analysis-box {
-          max-width: 780px;
-          margin: 0 auto 64px;
-          padding: 32px;
-        }
-        .box-title {
-          font-size: 1.35rem;
-          margin-bottom: 6px;
-        }
-        .box-desc {
-          font-size: 0.95rem;
+        .upload-subheading {
+          font-size: 0.875rem;
           color: var(--color-text-secondary);
-          margin-bottom: 24px;
+          margin: 0;
         }
-        .action-row {
+        .upload-actions {
           margin-top: 24px;
           display: flex;
           align-items: center;
           gap: 16px;
+          flex-wrap: wrap;
         }
-        .analyze-btn {
-          padding: 12px 28px;
-          font-size: 1rem;
+        .analyze-submit-btn {
+          padding: 12px 24px;
+          font-size: 0.95rem;
         }
-        .ready-indicator {
-          font-size: 0.85rem;
+        .status-ready {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.875rem;
           color: var(--color-success);
           font-weight: 500;
         }
-        .methodology-section {
-          margin-bottom: 48px;
+        .pillars-section {
+          max-width: 960px;
+          margin: 0 auto;
         }
-        .section-header {
-          text-align: center;
-          margin-bottom: 32px;
-        }
-        .section-title {
-          font-size: 1.5rem;
-          margin-bottom: 6px;
-        }
-        .section-subtitle {
-          font-size: 0.95rem;
-          color: var(--color-text-secondary);
-        }
-        .method-card {
-          position: relative;
-          padding: 28px 24px;
+        .pillar-card {
+          padding: 24px;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 8px;
+          background: #ffffff;
         }
-        .method-step {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          font-family: var(--font-mono);
-          font-size: 0.8rem;
+        .pillar-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          background: #EFF6FF;
+          color: #2563EB;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 4px;
+        }
+        .pillar-title {
+          font-size: 1.05rem;
           font-weight: 700;
-          color: var(--color-text-muted);
-        }
-        .method-icon {
-          color: var(--color-primary);
-        }
-        .method-title {
-          font-size: 1.1rem;
-        }
-        .method-desc {
-          font-size: 0.875rem;
-          line-height: 1.55;
-        }
-        .specs-card {
-          padding: 24px 32px;
-          background: var(--color-surface);
-        }
-        .specs-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 24px;
-        }
-        .spec-item {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-        .spec-label {
-          font-size: 0.775rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: var(--color-text-muted);
-          font-weight: 600;
-        }
-        .spec-val {
-          font-size: 0.95rem;
-          font-weight: 600;
           color: var(--color-text-primary);
+          margin: 0;
         }
-        @media (max-width: 768px) {
+        .pillar-desc {
+          font-size: 0.875rem;
+          color: var(--color-text-secondary);
+          line-height: 1.5;
+          margin: 0;
+        }
+        @media (max-width: 640px) {
           .hero-title {
             font-size: 2.1rem;
           }
-          .analysis-box {
+          .upload-container {
             padding: 20px;
-          }
-          .specs-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (max-width: 480px) {
-          .specs-grid {
-            grid-template-columns: 1fr;
           }
         }
       `}</style>

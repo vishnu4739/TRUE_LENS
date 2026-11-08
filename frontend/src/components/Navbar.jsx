@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Menu, X, User, LogOut } from 'lucide-react';
+import Logo from './Logo';
+import { Menu, X, User, LogOut } from 'lucide-react';
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -26,14 +27,13 @@ export default function Navbar() {
   return (
     <header className="navbar-root">
       <div className="container navbar-inner">
-        {/* Brand Wordmark */}
-        <Link to="/" className="brand-wordmark">
-          <Shield className="brand-icon" size={20} strokeWidth={2.2} />
-          <span className="brand-text">TrueLens</span>
+        {/* Brand Logo & Wordmark */}
+        <Link to="/" className="brand-wordmark" aria-label="TrueLens Home">
+          <Logo size="md" />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="desktop-nav">
+        <nav className="desktop-nav" aria-label="Main Navigation">
           {navLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -106,24 +106,24 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <button
                   onClick={handleLogout}
-                  className="btn btn-secondary btn-sm full-width"
+                  className="btn btn-secondary btn-block"
                 >
-                  <LogOut size={15} />
-                  <span>Sign Out ({user?.name || user?.email})</span>
+                  <LogOut size={16} />
+                  <span>Sign Out</span>
                 </button>
               ) : (
-                <div className="mobile-auth-btns">
+                <div className="mobile-auth-grid">
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="btn btn-secondary btn-sm"
+                    className="btn btn-secondary btn-block"
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-primary btn-block"
                   >
                     Register
                   </Link>
@@ -136,32 +136,24 @@ export default function Navbar() {
 
       <style>{`
         .navbar-root {
-          background: var(--color-surface);
-          border-bottom: 1px solid var(--color-border);
           position: sticky;
           top: 0;
-          z-index: 100;
+          z-index: 50;
+          background: #ffffff;
+          border-bottom: 1px solid var(--color-border);
+          backdrop-filter: blur(8px);
         }
         .navbar-inner {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          height: var(--navbar-height);
+          height: 68px;
+          gap: 24px;
         }
         .brand-wordmark {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          color: var(--color-text-primary);
-          font-weight: 700;
-          font-size: 1.25rem;
-          letter-spacing: -0.02em;
-        }
-        .brand-icon {
-          color: var(--color-primary);
-        }
-        .brand-text {
-          color: var(--color-primary);
+          text-decoration: none;
         }
         .desktop-nav {
           display: flex;
@@ -170,19 +162,20 @@ export default function Navbar() {
         }
         .nav-item {
           padding: 8px 14px;
-          border-radius: var(--radius-md);
+          border-radius: var(--radius-sm);
           font-size: 0.925rem;
-          color: var(--color-text-secondary);
           font-weight: 500;
-          transition: all var(--transition-fast);
+          color: var(--color-text-secondary);
+          transition: all 0.15s ease;
+          text-decoration: none;
         }
         .nav-item:hover {
-          color: var(--color-text-primary);
-          background: var(--color-background);
+          color: var(--color-primary);
+          background-color: var(--color-surface-hover);
         }
         .nav-item-active {
-          color: var(--color-text-primary);
-          background: var(--color-background);
+          color: var(--color-primary);
+          background-color: var(--color-surface-hover);
           font-weight: 600;
         }
         .auth-actions {
@@ -198,70 +191,72 @@ export default function Navbar() {
         .user-menu {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
         }
         .user-email {
-          display: inline-flex;
+          font-size: 0.85rem;
+          color: var(--color-text-secondary);
+          display: flex;
           align-items: center;
           gap: 6px;
-          font-size: 0.875rem;
-          color: var(--color-text-secondary);
-          max-width: 160px;
+          max-width: 140px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
         .mobile-toggle {
           display: none;
+          background: none;
+          border: none;
           color: var(--color-text-primary);
           padding: 6px;
+          cursor: pointer;
         }
         .mobile-drawer {
           display: none;
-          border-top: 1px solid var(--color-border);
-          background: var(--color-surface);
-          padding: 16px 24px;
         }
-        .mobile-nav-list {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .mobile-nav-item {
-          padding: 10px 14px;
-          border-radius: var(--radius-md);
-          font-size: 0.95rem;
-          color: var(--color-text-secondary);
-        }
-        .mobile-nav-item.active {
-          background: var(--color-background);
-          color: var(--color-text-primary);
-          font-weight: 600;
-        }
-        .mobile-auth-divider {
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--color-border);
-        }
-        .mobile-auth-btns {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-        .full-width {
-          width: 100%;
-        }
-        @media (max-width: 768px) {
-          .desktop-nav,
-          .auth-buttons,
-          .user-menu {
+        @media (max-width: 820px) {
+          .desktop-nav {
+            display: none;
+          }
+          .auth-buttons {
             display: none;
           }
           .mobile-toggle {
-            display: inline-flex;
+            display: block;
           }
           .mobile-drawer {
             display: block;
+            border-top: 1px solid var(--color-border);
+            background: #ffffff;
+            padding: 16px 20px 24px;
+          }
+          .mobile-nav-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+          .mobile-nav-item {
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: var(--color-text-primary);
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+          }
+          .mobile-nav-item.active {
+            background-color: var(--color-surface-hover);
+            color: var(--color-primary);
+            font-weight: 600;
+          }
+          .mobile-auth-divider {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+          }
+          .mobile-auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
           }
         }
       `}</style>

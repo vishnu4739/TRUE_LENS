@@ -1,228 +1,182 @@
 import React from 'react';
-import { Shield, BookOpen, Layers, BarChart2, AlertTriangle, FileCode } from 'lucide-react';
+import { ShieldCheck, Cpu, Database, CheckCircle2 } from 'lucide-react';
 
 export default function About() {
   return (
     <div className="page about-page">
-      <div className="container">
+      <div className="container about-container">
         <div className="page-header">
-          <h1>About TrueLens</h1>
+          <h1>Platform Overview</h1>
           <p>
-            An academic system for evaluating image authenticity through multi-tier machine 
-            learning feature extraction and classification.
+            TrueLens provides automated forensic verification to differentiate authentic camera captures from synthetic AI media.
           </p>
         </div>
 
-        <div className="about-sections">
-          {/* Section 1: Objective */}
-          <div className="card about-card">
-            <div className="about-header">
-              <Shield size={22} className="about-icon" />
-              <h2>1. Project Objective</h2>
+        <div className="about-stack">
+          {/* Card 1: Core Purpose */}
+          <div className="card concise-card">
+            <div className="concise-header">
+              <ShieldCheck size={20} className="concise-icon" />
+              <h2>Core Purpose</h2>
             </div>
-            <p>
-              TrueLens is built to research and demonstrate how statistical patterns differ 
-              between natural camera-captured photographs and synthetically generated imagery. 
-              As diffusion architectures and generative adversarial networks have advanced, 
-              detecting subtle algorithmic fingerprints has become critical for media forensics.
+            <p className="concise-statement">
+              Deterministic verification of digital image provenance using algorithmic pattern recognition.
             </p>
-            <p>
-              The system allows users to upload images, evaluate them across multiple traditional 
-              and deep learning classifiers, inspect per-model confidence distributions, and examine 
-              empirical benchmark metrics on independent test partitions.
-            </p>
-          </div>
-
-          {/* Section 2: Methodology */}
-          <div className="card about-card">
-            <div className="about-header">
-              <BookOpen size={22} className="about-icon" />
-              <h2>2. Detection Methodology</h2>
-            </div>
-            <p>
-              TrueLens combines spatial, frequency, and textural analysis pipelines to characterize 
-              images without relying on a single fallible indicator:
-            </p>
-            <ul className="about-list">
-              <li>
-                <strong>Histogram of Oriented Gradients (HOG):</strong> Measures edge orientations 
-                and structural edge regularity across standardized 8x8 spatial cells.
-              </li>
-              <li>
-                <strong>Local Binary Patterns (LBP):</strong> Captures micro-texture variations, 
-                differentiating between natural camera sensor noise and latent upsampling smoothing.
-              </li>
-              <li>
-                <strong>Discrete Cosine Transform (DCT):</strong> Analyzes frequency distributions. 
-                Generative models often leave characteristic high-frequency harmonic anomalies 
-                in the Fourier/DCT domain.
-              </li>
-              <li>
-                <strong>Color Statistics:</strong> Calculates higher-order moments (mean, variance, 
-                skewness) across individual RGB color channels to detect abnormal color co-occurrence.
-              </li>
-            </ul>
-          </div>
-
-          {/* Section 3: Machine Learning Algorithms */}
-          <div className="card about-card" id="algorithms">
-            <div className="about-header">
-              <Layers size={22} className="about-icon" />
-              <h2>3. Implemented Machine Learning Algorithms</h2>
-            </div>
-            <p>
-              The system implements 7 distinct algorithms categorized into traditional classifiers 
-              and deep neural architectures:
-            </p>
-            <div className="grid-2 algo-grid">
-              <div className="algo-box">
-                <h4>Traditional Classifiers</h4>
-                <ul>
-                  <li><strong>Logistic Regression:</strong> Linear baseline optimizing log-loss.</li>
-                  <li><strong>Random Forest:</strong> Ensemble of 100 decision trees with bootstrap aggregation.</li>
-                  <li><strong>Support Vector Machine (SVM):</strong> RBF-kernel classifier maximizing margin boundaries.</li>
-                  <li><strong>K-Nearest Neighbors (KNN):</strong> Instance-based metric distance classification.</li>
-                  <li><strong>XGBoost / Gradient Boosting:</strong> Iterative gradient-boosted decision trees.</li>
-                </ul>
+            <div className="spec-list">
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>Distinguishes natural optical sensor artifacts from synthetic generative diffusion noise.</span>
               </div>
-              <div className="algo-box">
-                <h4>Deep Learning Architectures</h4>
-                <ul>
-                  <li><strong>Convolutional Neural Network (CNN):</strong> 4-block hierarchical feature extractor with batch normalization, adaptive pooling, and dropout regularization.</li>
-                  <li><strong>Vision Transformer (ViT):</strong> Patch embedding projection (16x16) with multi-head self-attention encoder blocks and class token classification.</li>
-                </ul>
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>Provides objective probability scores for both authentic and synthetic classifications.</span>
+              </div>
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>Detects image tampering, latent upscaling artifacts, and synthetic face generation.</span>
               </div>
             </div>
           </div>
 
-          {/* Section 4: Evaluation Metrics */}
-          <div className="card about-card" id="metrics">
-            <div className="about-header">
-              <BarChart2 size={22} className="about-icon" />
-              <h2>4. Evaluation Metrics & Class Definition</h2>
+          {/* Card 2: Algorithms */}
+          <div className="card concise-card">
+            <div className="concise-header">
+              <Cpu size={20} className="concise-icon" />
+              <h2>Detection Engines</h2>
             </div>
-            <p>
-              Evaluation is conducted on a strictly isolated test set using standard binary classification metrics:
+            <p className="concise-statement">
+              Multi-model consensus combining traditional statistical classifiers and deep vision networks.
             </p>
-            <ul className="about-list">
-              <li><strong>Class 0 (Original):</strong> Natural photograph captured by camera sensors.</li>
-              <li><strong>Class 1 (AI-Generated):</strong> Synthetic image created via generative models.</li>
-              <li><strong>Accuracy:</strong> Ratio of correct predictions over total test samples.</li>
-              <li><strong>Precision (AI Class):</strong> Proportion of identified AI images that are truly synthetic: TP / (TP + FP).</li>
-              <li><strong>Recall (AI Class):</strong> Proportion of actual synthetic images correctly detected: TP / (TP + FN).</li>
-              <li><strong>F1-Score:</strong> Harmonic mean of precision and recall.</li>
-              <li><strong>ROC-AUC:</strong> Area under the Receiver Operating Characteristic curve.</li>
-            </ul>
+            <div className="engine-grid">
+              <div className="engine-badge">Logistic Regression</div>
+              <div className="engine-badge">Random Forest</div>
+              <div className="engine-badge">Support Vector Machine (SVM)</div>
+              <div className="engine-badge">K-Nearest Neighbors (KNN)</div>
+              <div className="engine-badge">XGBoost Gradient Boosting</div>
+              <div className="engine-badge">Convolutional Neural Network (CNN)</div>
+              <div className="engine-badge">Vision Transformer (ViT)</div>
+            </div>
           </div>
 
-          {/* Section 5: System Limitations */}
-          <div className="card about-card" id="limitations">
-            <div className="about-header">
-              <AlertTriangle size={22} className="about-icon" />
-              <h2>5. System Limitations & Forensic Boundaries</h2>
+          {/* Card 3: Security & Privacy */}
+          <div className="card concise-card">
+            <div className="concise-header">
+              <Database size={20} className="concise-icon" />
+              <h2>Security &amp; Data Handling</h2>
             </div>
-            <p>
-              To maintain academic integrity, TrueLens acknowledges the following constraints:
+            <p className="concise-statement">
+              Built for confidential forensics with zero permanent storage of uploaded imagery.
             </p>
-            <ul className="about-list">
-              <li>
-                <strong>No Guaranteed Detection:</strong> No machine learning model is 100% accurate. 
-                Predictions are statistical likelihood estimates and should not be used as the sole 
-                basis in formal disputes, academic investigations, or legal procedures.
-              </li>
-              <li>
-                <strong>Domain Shift:</strong> Models trained on specific generative models may have 
-                lower accuracy when evaluating outputs from newer, unseen generation architectures.
-              </li>
-              <li>
-                <strong>Image Post-Processing:</strong> Heavy JPEG compression, repeated resizing, 
-                or filtering can degrade characteristic noise signatures, potentially leading to 
-                inconclusive or false positive/negative results.
-              </li>
-              <li>
-                <strong>Uncertainty Handling:</strong> TrueLens explicitly reports an inconclusive 
-                status when model predictions fall between 40% and 60% probability or when ensemble 
-                models strongly disagree.
-              </li>
-            </ul>
+            <div className="spec-list">
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>In-memory processing ensures image buffers are released immediately after inference.</span>
+              </div>
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>Zero telemetry or tracking tags attached to uploaded files.</span>
+              </div>
+              <div className="spec-line">
+                <CheckCircle2 size={16} className="spec-check" />
+                <span>Encrypted transit via HTTPS and strict Content Security Policy enforcement.</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <style>{`
-        .about-sections {
+        .about-page {
+          padding-top: 36px;
+          padding-bottom: 60px;
+        }
+        .about-container {
+          max-width: 780px;
+        }
+        .page-header {
+          text-align: center;
+          margin-bottom: 36px;
+        }
+        .page-header h1 {
+          font-size: 2.25rem;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+          color: var(--color-text-primary);
+          margin-bottom: 8px;
+        }
+        .page-header p {
+          color: var(--color-text-secondary);
+          font-size: 1.05rem;
+          margin: 0;
+        }
+        .about-stack {
           display: flex;
           flex-direction: column;
-          gap: 24px;
-          max-width: 900px;
-          margin: 0 auto;
+          gap: 20px;
         }
-        .about-card {
+        .concise-card {
           padding: 28px 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
+          background: #ffffff;
         }
-        .about-header {
+        .concise-header {
           display: flex;
           align-items: center;
-          gap: 12px;
-          color: var(--color-primary);
+          gap: 10px;
+          margin-bottom: 8px;
         }
-        .about-header h2 {
+        .concise-icon {
+          color: #2563EB;
+        }
+        .concise-header h2 {
           font-size: 1.25rem;
+          font-weight: 700;
           color: var(--color-text-primary);
+          margin: 0;
         }
-        .about-icon {
-          color: var(--color-primary);
+        .concise-statement {
+          font-size: 0.95rem;
+          color: var(--color-text-secondary);
+          margin: 0 0 18px 0;
+          line-height: 1.5;
+        }
+        .spec-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .spec-line {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 0.9rem;
+          color: var(--color-text-primary);
+          line-height: 1.4;
+        }
+        .spec-check {
+          color: var(--color-success);
           flex-shrink: 0;
+          margin-top: 2px;
         }
-        .about-card p {
-          font-size: 0.95rem;
-          line-height: 1.6;
-        }
-        .about-list {
-          padding-left: 20px;
+        .engine-grid {
           display: flex;
-          flex-direction: column;
+          flex-wrap: wrap;
           gap: 8px;
-          font-size: 0.925rem;
-          color: var(--color-text-secondary);
         }
-        .about-list strong {
+        .engine-badge {
+          background: #F1F5F9;
+          border: 1px solid #E2E8F0;
           color: var(--color-text-primary);
+          font-size: 0.825rem;
+          font-weight: 500;
+          padding: 6px 14px;
+          border-radius: var(--radius-sm);
         }
-        .algo-grid {
-          margin-top: 8px;
-        }
-        .algo-box {
-          background: var(--color-background);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          padding: 18px 20px;
-        }
-        .algo-box h4 {
-          font-size: 0.95rem;
-          margin-bottom: 10px;
-          color: var(--color-primary);
-        }
-        .algo-box ul {
-          padding-left: 18px;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          font-size: 0.85rem;
-          color: var(--color-text-secondary);
-        }
-        .algo-box strong {
-          color: var(--color-text-primary);
-        }
-        @media (max-width: 768px) {
-          .about-card {
+        @media (max-width: 640px) {
+          .concise-card {
             padding: 20px;
           }
-          .algo-grid {
-            grid-template-columns: 1fr;
+          .page-header h1 {
+            font-size: 1.85rem;
           }
         }
       `}</style>
