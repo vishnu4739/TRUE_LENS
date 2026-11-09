@@ -132,3 +132,4 @@ export function getClientProfile() {
 export function clientLogout() {
   localStorage.removeItem(LOCAL_SESSION_KEY);
 }
+
