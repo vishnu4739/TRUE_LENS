@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { login as apiLogin, register as apiRegister, getProfile } from '../services/authService';
+import {
+  login as apiLogin,
+  register as apiRegister,
+  getProfile,
+  logoutUser,
+} from '../services/authService';
 
 const AuthContext = createContext(null);
 
@@ -45,6 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('truelens_token');
+    logoutUser();
     setToken(null);
     setUser(null);
   };
